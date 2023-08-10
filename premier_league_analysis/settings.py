@@ -38,7 +38,9 @@ PRE_DEFINDED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-THIRD_PARTY = []
+THIRD_PARTY = [
+    'django_extensions',
+]
 
 USER_APPS = [
     'player_info',
