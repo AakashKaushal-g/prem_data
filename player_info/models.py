@@ -2,11 +2,11 @@ from django.db import models
 
 # Create your models here.
 
-FOOT_CHOICES = ['L','R','N']
+FOOT_CHOICES = [('L','Left'),('R','Right'),('N','Not Available')]
 class PlayerInfo(models.Model):
     name = models.CharField(max_length=100)
-    country = models.CharField()
-    position = models.CharField()
+    country = models.CharField(max_length=60)
+    position = models.CharField(max_length=15)
     foot = models.CharField(max_length=1,choices=FOOT_CHOICES,default='N')
     birth_date = models.DateField()
     height = models.FloatField()
