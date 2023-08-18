@@ -1,2 +1,4 @@
 prem/
 *.pyc
+notebooks/
+*/_pycache_
