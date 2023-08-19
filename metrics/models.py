@@ -1,5 +1,5 @@
 from django.db import models
-
+from math import round
 # Create your models here.
     
 class Team(models.Models) : 
@@ -26,11 +26,6 @@ class RegularData(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # def save(self, *args, **kwargs):
-    #     if self.x:
-    #         self.pi_x = self.x / 3.14
-    #     super().save(*args, **kwargs)
-
 class StandardStats(RegularData):
     total_players = models.IntegerField()
     avg_age = models.FloatField()
@@ -38,14 +33,19 @@ class StandardStats(RegularData):
     goals_scored = models.IntegerField()
     assists = models.IntegerField()
     non_penalty_goals = models.IntegerField()
-    penalty_created = models.FloatField()
+    penalty_scored = models.IntegerField()
     penalty_attempted = models.FloatField()
     yellow_cards = models.IntegerField()
     red_cards = models.IntegerField()
     non_penalty_expected_goals = models.FloatField()
     expected_assists = models.FloatField()
-    progressive_carries = models.FloatField()
-    progressive_passes = models.FloatField()
+    progressive_carries = models.IntegerField()
+    progressive_passes = models.IntegerField()
+    
+    def save(self, *args, **kwargs):
+        if self.goals_scored and self.penalty_scored:
+            self.non_penalty_goals = abs(self.goals_scored - self.penalty_scored)
+        super().save(*args, **kwargs)
 
 class GoalKeepingStats(RegularData):
     shot_on_target_against = models.IntegerField()
@@ -79,6 +79,11 @@ class GoalKeepingStats(RegularData):
     defensive_action_outside_penalty_area = models.IntegerField()
     avg_distance_from_defensive_action_outside_penalty_area = models.IntegerField()
 
+    def save(self, *args, **kwargs):
+        if self.post_shot_expected_goals and self.goals_against:
+            self.post_shot_expected_goals_vs_allowed_goals = abs(self.post_shot_expected_goals - self.goals_against)
+        super().save(*args, **kwargs)
+
 class ShootingStats(RegularData):
     goals_scored = models.IntegerField()
     total_shots_attempted = models.IntegerField()
@@ -96,6 +101,24 @@ class ShootingStats(RegularData):
     expected_goals_vs_conceded_goals = models.FloatField()
     non_penalty_expected_goals_vs_conceded_non_penalty_goals = models.FloatField()
     
+    def save(self, *args, **kwargs):
+        if self.total_shots_attempted and self.total_shots_attempted_on_target:
+            self.shot_on_target_percentage = round(((self.total_shots_attempted - self.total_shots_attempted_on_target)/self.total_shots_attempted)*100,3)
+
+        if self.total_shots_attempted :
+            self.shots_per_90 = round(self.total_shots_attempted/90,3)
+
+        if self.goals_scored and self.total_shots_attempted :
+            self.goal_per_shot = round(self.goals_scored/self.total_shots_attempted,3)
+
+        if self.goals_scored and self.total_shots_attempted_on_target:
+            self.goal_per_shot_on_target = round(self.goals_scored/self.total_shots_attempted_on_target,3)
+
+        if self.non_penalty_expected_goal and self.total_shots_attempted :
+            self.non_penalty_expected_goal_per_shot = round(self.non_penalty_expected_goal/self.total_shots_attempted,3)
+
+        super().save(*args, **kwargs)
+    
 class PassingStats(RegularData):
    player = models.IntegerField()
    passes_attempted = models.IntegerField()
@@ -112,6 +135,7 @@ class PassingStats(RegularData):
    long_passes_attempted = models.IntegerField()
    long_passes_completed = models.IntegerField()
    long_pass_completion_percent = models.FloatField()
+   assists = models.IntegerField()
    # xG which follows a pass that assists a shot
    expected_assisted_goals = models.FloatField()
    # likelihood each completed pass becomes a goal assists given the pass type, phase of play, location and distance
@@ -154,7 +178,32 @@ class PassingStats(RegularData):
    gca_by_shot = models.IntegerField()
    gca_by_defensive_action = models.IntegerField()
    gca_by_foul_drawn = models.IntegerField()
-   
+
+   def save(self, *args, **kwargs):
+        if self.passes_attempted and self.passes_completed:
+            self.pass_completion_percent = round((self.passes_completed/self.passes_attempted)*100,3)
+        
+        if self.short_passes_attempted and self.short_passes_completed:
+            self.short_pass_completion_percent = round((self.short_passes_completed/self.short_passes_attempted)*100,3)
+        
+        if self.medium_passes_attempted and self.medium_passes_completed:
+            self.medium_pass_completion_percent = round((self.medium_passes_completed/self.medium_passes_attempted)*100,3)
+
+        if self.long_passes_attempted and self.long_passes_completed:
+            self.long_pass_completion_percent = round((self.long_passes_completed/self.long_passes_attempted)*100,3)
+
+        if self.expected_assists and self.assists:
+            self.assists_vs_expected_assists_difference = round(self.assists - self.expected_assists,3)
+
+        if self.shot_creating_actions:
+            self.shot_creating_actions_p90 = round(self.shot_creating_actions/90,3)
+
+        if self.goal_creating_actions:
+            self.goal_creating_actions_p90 = round(self.goal_creating_actions/90,3)
+
+
+        super().save(*args, **kwargs)
+    
 class DefensiveActions(RegularData):
     players = models.IntegerField()
     tackles_attempted = models.IntegerField()
@@ -172,6 +221,15 @@ class DefensiveActions(RegularData):
     inteceptions_made = models.IntegerField()
     clearences_made = models.IntegerField()
     error_leading_to_shot = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        if self.tackles_won and self.tackles_attempted:
+            self.tackle_win_percentage = round((self.tackles_won/self.tackles_attempted)*100,3)
+        
+        if self.challenges_made and self.challenges_won:
+            self.challenges_win_percentage = round((self.challenges_won/self.challenges_made)*100,3)
+        
+        super().save(*args, **kwargs)
 
 class PossesionStats(RegularData):
     players = models.IntegerField()
@@ -199,10 +257,30 @@ class PossesionStats(RegularData):
     # or any completed pass into the penalty area. Excludes passes from the defending 40% of the pitch.
     progressive_passes_recieved = models.IntegerField()
     
-class PlaytimeStats(RegularData):
-    pass    
+    def save(self, *args, **kwargs):
+        if self.successful_take_ons and self.take_ons_attempted:
+            self.take_on_success_percentage = round((self.successful_take_ons/self.take_ons_attempted)*100,3)
+        
+        super().save(*args, **kwargs)
+
 
 class MiscStats(RegularData):
-    pass    
+    yellow_cards = models.IntegerField()  
+    red_cards = models.IntegerField()  
+    second_yellow_cards = models.IntegerField()
+    fouls_committed = models.IntegerField()
+    fouls_drawn = models.IntegerField()
+    crosses_attempted = models.IntegerField()
+    offsides = models.IntegerField()
+    interceptions = models.IntegerField()
+    tackles_won = models.IntegerField()
+    penalty_kicks_won = models.IntegerField()
+    penalty_kicks_conceded = models.IntegerField()
+    own_goals = models.IntegerField()
+    ball_recoveries = models.IntegerField()
+    aerial_duels_attempted = models.IntegerField()
+    aerial_duels_won = models.IntegerField()
+    aerial_duels_win_percentage = models.FloatField()
+
 
 
