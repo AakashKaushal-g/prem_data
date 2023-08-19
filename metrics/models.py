@@ -156,12 +156,49 @@ class PassingStats(RegularData):
    gca_by_foul_drawn = models.IntegerField()
    
 class DefensiveActions(RegularData):
-    # Goal and shot creation
-    pass    
+    players = models.IntegerField()
+    tackles_attempted = models.IntegerField()
+    tackles_won = models.IntegerField()
+    tackle_win_percentage = models.FloatField()
+    tackles_made_in_defensive_third = models.IntegerField()
+    tackles_made_in_midfield_third = models.IntegerField()
+    tackles_made_in_offensive_third = models.IntegerField()
+    challenges_made = models.IntegerField()
+    challenges_won = models.IntegerField()
+    challenges_win_percentage = models.FloatField()
+    blocks_made = models.IntegerField()
+    shots_blocked = models.IntegerField()
+    passes_blocked = models.IntegerField()
+    inteceptions_made = models.IntegerField()
+    clearences_made = models.IntegerField()
+    error_leading_to_shot = models.IntegerField()
 
 class PossesionStats(RegularData):
-    pass    
-
+    players = models.IntegerField()
+    total_touches = models.IntegerField()
+    total_touches_in_defensive_penalty_area = models.IntegerField()
+    total_touches_in_defensive_third = models.IntegerField()
+    total_touches_in_midfield_third = models.IntegerField()
+    total_touches_in_offensive_third = models.IntegerField()
+    total_touches_in_offensive_penalty_area = models.IntegerField()
+    take_ons_attempted = models.IntegerField()
+    successful_take_ons = models.IntegerField()
+    take_on_success_percentage = models.FloatField()
+    tackled_on_take_on = models.IntegerField()
+    tackled_on_take_on_percentage = models.FloatField()
+    total_carries = models.IntegerField()
+    total_distance_carries = models.IntegerField()
+    total_progressive_distance_carries = models.IntegerField()
+    progressive_carries = models.IntegerField()
+    carries_into_final_third = models.IntegerField()
+    carries_into_penalty_area = models.IntegerField()
+    miscontrols = models.IntegerField()
+    dispossesed = models.IntegerField()
+    passes_recieved = models.IntegerField()
+    # Completed passes that move the ball towards the opponent's goal line at least 10 yards from its furthest point in the last six passes,
+    # or any completed pass into the penalty area. Excludes passes from the defending 40% of the pitch.
+    progressive_passes_recieved = models.IntegerField()
+    
 class PlaytimeStats(RegularData):
     pass    
 
