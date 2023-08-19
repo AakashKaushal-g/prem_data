@@ -96,11 +96,65 @@ class ShootingStats(RegularData):
     expected_goals_vs_conceded_goals = models.FloatField()
     non_penalty_expected_goals_vs_conceded_non_penalty_goals = models.FloatField()
     
-
 class PassingStats(RegularData):
-    # Passing,PassTypes
-    pass    
+   player = models.IntegerField()
+   passes_attempted = models.IntegerField()
+   passes_completed = models.IntegerField()
+   pass_completion_percent = models.FloatField()
+   pass_distance = models.FloatField()
+   progressive_pass_distance = models.FloatField()
+   short_passes_attempted = models.IntegerField()
+   short_passes_completed = models.IntegerField()
+   short_pass_completion_percent = models.FloatField()
+   medium_passes_attempted = models.IntegerField()
+   medium_passes_completed = models.IntegerField()
+   medium_pass_completion_percent = models.FloatField()
+   long_passes_attempted = models.IntegerField()
+   long_passes_completed = models.IntegerField()
+   long_pass_completion_percent = models.FloatField()
+   # xG which follows a pass that assists a shot
+   expected_assisted_goals = models.FloatField()
+   # likelihood each completed pass becomes a goal assists given the pass type, phase of play, location and distance
+   expected_assists = models.FloatField()
+   assists_vs_expected_assists_difference = models.FloatField()
+   key_passed = models.IntegerField()
+   passes_into_final_third = models.IntegerField()
+   passes_into_penalty_area = models.IntegerField()
+   crosses_into_penalty_area = models.IntegerField()
+   progressive_passes = models.IntegerField()
 
+   live_passes = models.IntegerField()
+   dead_ball_passes = models.IntegerField()
+   freekick_attempted = models.IntegerField()
+   through_ball = models.IntegerField()
+   # any pass travelled more than 40 yrds along thewidth of field
+   switch = models.IntegerField()
+   thorw_in = models.IntegerField()
+   cross = models.IntegerField()
+   corner = models.IntegerField()
+   inswing_corner = models.IntegerField()
+   outswing_corner = models.IntegerField()
+   straight_corner = models.IntegerField()
+   passes_offside = models.IntegerField()
+   passes_blocked_by_opposition = models.IntegerField()
+
+   shot_creating_actions = models.IntegerField()
+   shot_creating_actions_p90 = models.IntegerField()
+   sca_by_live_passes = models.IntegerField()
+   sca_by_dead_balls = models.IntegerField()
+   sca_by_take_ons = models.IntegerField()
+   sca_by_shot = models.IntegerField()
+   sca_by_defensive_action = models.IntegerField()
+   sca_by_foul_drawn = models.IntegerField()
+   goal_creating_actions = models.IntegerField()
+   goal_creating_actions_p90 = models.IntegerField()
+   gca_by_live_passes = models.IntegerField()
+   gca_by_dead_balls = models.IntegerField()
+   gca_by_take_ons = models.IntegerField()
+   gca_by_shot = models.IntegerField()
+   gca_by_defensive_action = models.IntegerField()
+   gca_by_foul_drawn = models.IntegerField()
+   
 class DefensiveActions(RegularData):
     # Goal and shot creation
     pass    
